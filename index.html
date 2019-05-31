@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Taste Trenton 2019</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <link rel="shortcut icon" href="https://carto.com/favicon.ico" />
+    <style>
+      html, body, #map {
+        height: 100%;
+        padding: 0;
+        margin: 0;
+      }
+	  
+	  #locate-position{
+  position:absolute;
+  top:140px;
+  left:22px;
+  -webkit-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+  box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+
+  background-color:#ffffff;
+  border: solid 1px #999999;
+  border-radius: 3px;
+  height: 28px;
+  width:28px;
+}
+    </style>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/uikit/2.22.0/js/uikit.min.js'></script>
+    <link rel="stylesheet" href="https://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" />
+  </head>
+  <body>
+    <div id="map"></div>
+	 <button id="locate-position"><img style="padding:0; margin-left:-6px" src="icon.png"></button>
+
+    <!-- include cartodb.js library -->
+    <script src="https://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+
+
+
+
+<script>
+
+
+      function main() {
+        cartodb.createVis('map', 'https://trenton-downtown.carto.com/api/v2/viz/5ab5bd77-194b-4509-bb2f-5bebcab603c2/viz.json', {
+            shareable: true,
+            title: true,
+            description: true,
+            search: false,
+            tiles_loader: true,
+            center_lat: 40.219768,
+            center_lon: -74.753081,
+            zoom: 14
+        })
+        .done(function(vis, layers) {
+
+          layers[1].setInteraction(true);
+          layers[1].on('featureOver', function(e, latlng, pos, data) {
+            //cartodb.log.log(e, latlng, pos, data);
+          });
+
+          var map = vis.getNativeMap();
+		  
+		$('#locate-position').on('click', function(){
+  map.locate({setView: true, maxZoom: 15});
+});
+
+var locateLayer = L.layerGroup().addTo(map);
+var markerOn = false;
+function onLocationFound(e) {
+	if (markerOn == true) {
+		locateLayer.clearLayers();
+		console.log(locateLayer);
+	}
+    L.marker(e.latlng).addTo(locateLayer);
+	markerOn = true;
+}
+
+map.on('locationfound', onLocationFound);
+
+function onLocationError(e) {
+    alert(e.message);
+}
+map.on('locationerror', onLocationError);		  
+		  
+		  
+		  
+
+        })
+        .error(function(err) {
+          console.log(err);
+        });
+		
+
+		
+ }
+		
+    
+      window.onload = main;
+	  
+
+
+    </script>
+  </body>
+</html>
